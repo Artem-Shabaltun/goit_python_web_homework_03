@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "goit-python-web-homework-03"
+version = "0.1.0"
+description = ""
+authors = ["Artem-Shabaltun <134101240+Artem-Shabaltun@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
