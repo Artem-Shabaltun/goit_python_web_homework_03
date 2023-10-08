@@ -1,11 +1,11 @@
 import argparse
-from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from shutil import copyfile
 from tqdm import tqdm
 import logging
 import sys
 import time
+import threading
 
 
 
@@ -49,8 +49,23 @@ if __name__ == "__main__":
 
     folders = [source, *grabs_folder(source)]
 
-    with Pool(cpu_count()) as pool:
-        list(tqdm(pool.imap(copy_file, folders), total=len(folders)))
+    def thread_copy_file(path):
+        for el in path.iterdir():
+            if el.is_file():
+                ext = el.suffix[1:]
+                ext_folder = output / ext
+                try:
+                    ext_folder.mkdir(exist_ok=True, parents=True)
+                    copyfile(el, ext_folder / el.name)
+                except OSError as err:
+                    logging.error(err)
+                    sys.exit(1)
+
+# Використовуємо tqdm для створення прогрес-бару
+    for folder in tqdm(folders, desc="Copying files"):
+        thread = threading.Thread(target=thread_copy_file, args=(folder,))
+        thread.start()
+        thread.join()
 
     print(f"Можна видалять {source}")
 
